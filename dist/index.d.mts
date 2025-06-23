@@ -21,4 +21,8 @@ interface Options {
 }
 declare function onRipple(event: string, handler: Handler, options?: Options): void;
 
-export { type Ripple, onRipple, ripple, useRipple };
+type Listener = (payload?: any) => void;
+declare function emit(event: string, payload?: string): void;
+declare function on(event: string, handler: Listener): () => void;
+
+export { type Ripple, emit, on, onRipple, ripple, useRipple };
