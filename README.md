@@ -191,7 +191,7 @@ const userStore = {
 };
 ```
 
-## Why Ripple?
+## Why Ripplex?
 
 - **Simple**: Minimal API with maximum power
 - **Reactive**: Automatic React integration with `useRipple`
