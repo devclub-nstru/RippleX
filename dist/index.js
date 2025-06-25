@@ -1036,7 +1036,8 @@ function createProxy(target, notify) {
     },
     set(obj, key, value) {
       const old = obj[key];
-      const result = Reflect.set(obj, key, value);
+      const newVal = typeof value === "object" && value !== null ? createProxy(value, notify) : value;
+      const result = Reflect.set(obj, key, newVal);
       if (!Object.is(old, value)) {
         notify();
       }
