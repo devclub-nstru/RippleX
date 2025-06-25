@@ -1,6 +1,6 @@
 {
   "name": "ripplex",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "A lightweight, reactive state management library for React.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

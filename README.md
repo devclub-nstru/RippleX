@@ -11,24 +11,24 @@ npm install ripplex
 ## Quick Start
 
 ```typescript
-import { ripple, useRipple, emit, onRipple } from 'ripplex';
+import { ripple, useRipple, emit, useRippleEffect } from "ripplex";
 
 // Create reactive state
 const counterStore = {
   count: ripple(0),
   loading: ripple(false),
-  error: ripple(null)
+  error: ripple(null),
 };
 
 function Counter() {
   const count = useRipple(counterStore.count);
   const loading = useRipple(counterStore.loading);
-  
+
   // Handle async operations with auto loading/error states
-  onRipple(
+  useRippleEffect(
     "increment:async",
     async () => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       counterStore.count.value += 1;
     },
     counterStore // Auto-handles loading and error
@@ -40,9 +40,7 @@ function Counter() {
       <button onClick={() => emit("increment:async")}>
         {loading ? "Loading..." : "+1 Async"}
       </button>
-      <button onClick={() => counterStore.count.value -= 1}>
-        -1
-      </button>
+      <button onClick={() => (counterStore.count.value -= 1)}>-1</button>
     </div>
   );
 }
@@ -57,7 +55,7 @@ Create reactive state that automatically triggers React re-renders:
 ```typescript
 const userStore = {
   name: ripple(""),
-  isLoggedIn: ripple(false)
+  isLoggedIn: ripple(false),
 };
 ```
 
@@ -69,7 +67,7 @@ Subscribe to state changes in React components:
 function UserProfile() {
   const name = useRipple(userStore.name);
   const isLoggedIn = useRipple(userStore.isLoggedIn);
-  
+
   return <div>{isLoggedIn ? `Hello ${name}` : "Please login"}</div>;
 }
 ```
@@ -79,7 +77,7 @@ function UserProfile() {
 Decouple your application logic using events:
 
 ```typescript
-import { emit, on } from 'ripple';
+import { emit, on } from "ripple";
 
 // Listen for events
 on("user:login", (userData) => {
@@ -99,11 +97,11 @@ Handle loading and error states automatically:
 const todoStore = {
   todos: ripple([]),
   loading: ripple(false),
-  error: ripple(null)
+  error: ripple(null),
 };
 
 // Async operations with auto-managed loading/error states
-onRipple(
+useRippleEffect(
   "fetch:todos",
   async () => {
     const response = await fetch("/api/todos");
@@ -125,16 +123,16 @@ emit("fetch:todos");
 - `useRipple(signal)` - React hook to subscribe to a signal
 - `emit(event, payload?)` - Emit an event
 - `on(event, handler)` - Listen for events
-- `onRipple(event, asyncHandler, store?)` - Handle async events with auto state management
+- `useRippleEffect(event, asyncHandler, store?)` - Handle async events with auto state management
 
 ### Signal Properties
 
 ```typescript
 const signal = ripple(0);
 
-signal.value = 10;           // Set value
+signal.value = 10; // Set value
 const current = signal.value; // Get value
-const peek = signal.peek();   // Get without subscribing
+const peek = signal.peek(); // Get without subscribing
 ```
 
 ## Store Pattern
@@ -146,11 +144,11 @@ const appStore = {
   // Data
   user: ripple(null),
   todos: ripple([]),
-  
+
   // UI State
   loading: ripple(false),
   error: ripple(null),
-  
+
   // Computed values can be derived in components
   // or using external computed libraries
 };
@@ -159,13 +157,17 @@ const appStore = {
 function App() {
   const user = useRipple(appStore.user);
   const loading = useRipple(appStore.loading);
-  
-  onRipple("load:user", async (userId) => {
-    const response = await fetch(`/api/users/${userId}`);
-    const userData = await response.json();
-    appStore.user.value = userData;
-  }, appStore);
-  
+
+  useRippleEffect(
+    "load:user",
+    async (userId) => {
+      const response = await fetch(`/api/users/${userId}`);
+      const userData = await response.json();
+      appStore.user.value = userData;
+    },
+    appStore
+  );
+
   return (
     <div>
       {loading ? "Loading..." : user?.name}
@@ -187,7 +189,7 @@ interface User {
 
 const userStore = {
   currentUser: ripple<User | null>(null),
-  users: ripple<User[]>([])
+  users: ripple<User[]>([]),
 };
 ```
 

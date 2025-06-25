@@ -22,13 +22,13 @@ var index_exports = {};
 __export(index_exports, {
   emit: () => emit,
   on: () => on,
-  onRipple: () => onRipple,
   ripple: () => ripple,
-  useRipple: () => useRipple
+  useRipple: () => useRipple,
+  useRippleEffect: () => useRippleEffect
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/core/onRipple.ts
+// src/core/useRippleEffect.ts
 var import_react = require("react");
 
 // src/core/eventBus.ts
@@ -46,8 +46,8 @@ function on(event, handler) {
   };
 }
 
-// src/core/onRipple.ts
-function onRipple(event, handler, options) {
+// src/core/useRippleEffect.ts
+function useRippleEffect(event, handler, options) {
   const stableHandler = (0, import_react.useRef)(handler);
   (0, import_react.useEffect)(() => {
     stableHandler.current = handler;
@@ -990,38 +990,129 @@ function T3() {
   if (1 === _2.push(this)) (l.requestAnimationFrame || q2)(F2);
 }
 
-// src/core/ripple.ts
-var import_react2 = require("react");
-var RIPPLE_BRAND = Symbol("signal");
-function ripple(initial) {
+// src/utils/ripplePrimitive.ts
+function ripplePrimitive(initial) {
   let _value = initial;
   const subscribers = /* @__PURE__ */ new Set();
-  const subscribe = (cb) => {
-    subscribers.add(cb);
-    return () => subscribers.delete(cb);
+  const subscribe = (callback, selector = (v5) => v5) => {
+    const subscriber = {
+      callback,
+      selector,
+      prevValue: selector(_value)
+    };
+    subscribers.add(subscriber);
+    return () => subscribers.delete(subscriber);
   };
   return {
     get value() {
       return _value;
     },
     set value(val) {
+      if (Object.is(_value, val)) return;
       _value = val;
-      subscribers.forEach((cb) => cb());
+      for (const sub of subscribers) {
+        const nextVal = sub.selector(_value);
+        if (!Object.is(nextVal, sub.prevValue)) {
+          sub.prevValue = nextVal;
+          sub.callback();
+        }
+      }
     },
     subscribe,
     peek: () => _value,
-    toJSON: () => _value,
     brand: RIPPLE_BRAND
   };
 }
-function useRipple(ripple2) {
-  return (0, import_react2.useSyncExternalStore)(ripple2.subscribe, () => ripple2.value);
+
+// src/utils/createProxy.ts
+function createProxy(target, notify) {
+  return new Proxy(target, {
+    get(obj, key, receiver) {
+      const value = Reflect.get(obj, key, receiver);
+      if (typeof value === "object" && value !== null) {
+        return createProxy(value, notify);
+      }
+      return value;
+    },
+    set(obj, key, value) {
+      const old = obj[key];
+      const result = Reflect.set(obj, key, value);
+      if (!Object.is(old, value)) {
+        notify();
+      }
+      return result;
+    },
+    deleteProperty(obj, key) {
+      const result = Reflect.deleteProperty(obj, key);
+      notify();
+      return result;
+    }
+  });
+}
+
+// src/utils/rippleObject.ts
+function rippleObject(initial) {
+  let rawValue = initial;
+  const subscribers = /* @__PURE__ */ new Set();
+  const notify = () => {
+    for (const sub of subscribers) {
+      const nextVal = sub.selector(proxyValue);
+      if (!Object.is(nextVal, sub.prevValue)) {
+        sub.prevValue = nextVal;
+        sub.callback();
+      }
+    }
+  };
+  let proxyValue = createProxy(initial, notify);
+  const subscribe = (callback, selector = (v5) => v5) => {
+    const subscriber = {
+      callback,
+      selector,
+      prevValue: selector(proxyValue)
+    };
+    subscribers.add(subscriber);
+    return () => subscribers.delete(subscriber);
+  };
+  return {
+    get value() {
+      return proxyValue;
+    },
+    set value(newVal) {
+      if (!Object.is(rawValue, newVal)) {
+        rawValue = newVal;
+        proxyValue = createProxy(newVal, notify);
+        notify();
+      }
+    },
+    subscribe,
+    peek: () => proxyValue,
+    brand: RIPPLE_BRAND
+  };
+}
+
+// src/core/ripple.ts
+var RIPPLE_BRAND = Symbol("signal");
+function ripple(initial) {
+  if (typeof initial === "object" && initial !== null) {
+    return rippleObject(initial);
+  }
+  return ripplePrimitive(initial);
+}
+
+// src/core/useRipple.ts
+var import_react2 = require("react");
+function useRipple(ripple2, selector = (v5) => v5) {
+  return (0, import_react2.useSyncExternalStore)(
+    (cb) => ripple2.subscribe(cb, selector),
+    () => selector(ripple2.value),
+    () => selector(ripple2.peek())
+  );
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   emit,
   on,
-  onRipple,
   ripple,
-  useRipple
+  useRipple,
+  useRippleEffect
 });

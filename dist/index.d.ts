@@ -1,28 +1,29 @@
-interface Ripple<T> {
-    value: T;
-    subscribe: (cb: () => void) => () => void;
-    peek: () => T;
-    toJSON: () => T;
-    brand: symbol;
-}
-declare function ripple<T>(initial: T): Ripple<T>;
-declare function useRipple<T>(ripple: {
-    value: T;
-    subscribe: (cb: () => void) => () => void;
-}): T;
-
-type Handler = (payload?: any, tools?: {
+type HandlerType = (payload?: any, tools?: {
     aborted: () => boolean;
 }) => void | Promise<any>;
-interface Options {
-    loadingSignal?: Ripple<boolean>;
-    errorSignal?: Ripple<any>;
+
+interface RippleInterface<T> {
+    value: T;
+    subscribe: (cb: () => void, selector?: (v: T) => unknown) => () => void;
+    peek: () => T;
+    brand: symbol;
+}
+
+interface OptionsInterface {
+    loadingSignal?: RippleInterface<boolean>;
+    errorSignal?: RippleInterface<string>;
     [key: string]: any;
 }
-declare function onRipple(event: string, handler: Handler, options?: Options): void;
 
-type Listener = (payload?: any) => void;
+declare function useRippleEffect(event: string, handler: HandlerType, options?: OptionsInterface): void;
+
+declare function ripple<T>(initial: T): RippleInterface<T>;
+
+declare function useRipple<T, S = T>(ripple: RippleInterface<T>, selector?: (value: T) => S): S;
+
+type ListenerInterface = (payload?: any) => void;
+
 declare function emit(event: string, payload?: string): void;
-declare function on(event: string, handler: Listener): () => void;
+declare function on(event: string, handler: ListenerInterface): () => void;
 
-export { type Ripple, emit, on, onRipple, ripple, useRipple };
+export { type RippleInterface, emit, on, ripple, useRipple, useRippleEffect };

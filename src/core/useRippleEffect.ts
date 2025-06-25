@@ -1,20 +1,16 @@
 import { useEffect, useRef } from "react";
 import { on } from "./eventBus";
-import type { Ripple } from "./ripple";
+import { RippleInterface } from "../interfaces/ripple.interface";
+import { HandlerType } from "../types/handler.types";
+import { OptionsInterface } from "../interfaces/options.interface";
 
-type Handler = (
-  payload?: any,
-  tools?: { aborted: () => boolean }
-) => void | Promise<any>;
-
-interface Options {
-  loadingSignal?: Ripple<boolean>;
-  errorSignal?: Ripple<any>;
-  [key: string]: any;
-}
-
-export function onRipple(event: string, handler: Handler, options?: Options) {
+export function useRippleEffect(
+  event: string,
+  handler: HandlerType,
+  options?: OptionsInterface
+) {
   const stableHandler = useRef(handler);
+
   useEffect(() => {
     stableHandler.current = handler;
   }, [handler]);
@@ -27,9 +23,10 @@ export function onRipple(event: string, handler: Handler, options?: Options) {
       if (cancelled) return;
 
       const loadingSignal =
-        options?.loadingSignal ?? (options?.loading as Ripple<boolean>);
+        options?.loadingSignal ??
+        (options?.loading as RippleInterface<boolean>);
       const errorSignal =
-        options?.errorSignal ?? (options?.error as Ripple<any>);
+        options?.errorSignal ?? (options?.error as RippleInterface<any>);
 
       loadingSignal && (loadingSignal.value = true);
       errorSignal && (errorSignal.value = null);
