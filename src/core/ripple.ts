@@ -11,10 +11,10 @@ function ripple<T>(initial: T): RippleInterface<T> {
     : ripplePrimitive(initial);
 }
 
-
-function isObject(value: unknown): value is object {
-  return typeof value === 'object' && value !== null;
+function isObject(value: unknown): value is object | Array<any> {
+  return (typeof value === 'object' && value !== null) || Array.isArray(value);
 }
+
 
 Object.assign(ripple, {
   proxy: rippleObject,

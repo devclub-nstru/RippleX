@@ -14,6 +14,11 @@ export function createProxy<T extends object>(
     set(obj, key, value) {
       const old = obj[key as keyof T];
       const result = Reflect.set(obj, key, value);
+
+      if (Array.isArray(obj) && key === 'length') {
+        notify();
+      } 
+
       if (!Object.is(old, value)) {
         notify();
       }
