@@ -1,6 +1,6 @@
 {
   "name": "ripplex-core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A lightweight, framework-agnostic reactive state library.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -54,6 +54,8 @@
   "bugs": {
     "url": "https://github.com/devclub-nstru/ripplex/issues"
   },
-  "publishConfig": {"access": "public"},
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT"
 }
