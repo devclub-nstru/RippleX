@@ -1006,8 +1006,10 @@ function createProxy(target, notify) {
     },
     set(obj, key, value) {
       const old = obj[key];
-      const newVal = typeof value === "object" && value !== null ? createProxy(value, notify) : value;
-      const result = Reflect.set(obj, key, newVal);
+      const result = Reflect.set(obj, key, value);
+      if (Array.isArray(obj) && key === "length") {
+        notify();
+      }
       if (!Object.is(old, value)) {
         notify();
       }
@@ -1064,11 +1066,15 @@ function rippleObject(initial) {
 // src/core/ripple.ts
 var RIPPLE_BRAND = Symbol("signal");
 function ripple(initial) {
-  if (typeof initial === "object" && initial !== null) {
-    return rippleObject(initial);
-  }
-  return ripplePrimitive(initial);
+  return isObject(initial) ? rippleObject(initial) : ripplePrimitive(initial);
 }
+function isObject(value) {
+  return typeof value === "object" && value !== null || Array.isArray(value);
+}
+Object.assign(ripple, {
+  proxy: rippleObject,
+  signal: ripplePrimitive
+});
 
 // src/core/useRipple.ts
 import { useSyncExternalStore } from "react";

@@ -1,10 +1,41 @@
 {
-  "name": "ripplex",
+  "name": "yasml",
   "version": "0.0.8",
-  "description": "A lightweight, reactive state management library for React.",
+  "description": "Yet Another Signals Management Library – A lightweight, framework-agnostic reactive state library.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepare": "npm run build",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "signals",
+    "state-management",
+    "reactive",
+    "framework-agnostic",
+    "react",
+    "vue",
+    "angular",
+    "zustand-alternative",
+    "fine-grained"
+  ],
+  "author": "Rishik Chowdary",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devclub-nstru/YASML"
+  },
+  "homepage": "https://github.com/devclub-nstru/YASML#readme",
+  "bugs": {
+    "url": "https://github.com/devclub-nstru/YASML/issues"
+  },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
@@ -12,30 +43,24 @@
   "devDependencies": {
     "@preact/signals": "^2.2.0",
     "@types/react": "^19.1.8",
+    "prettier": "3.6.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tsup": "^8.5.0",
-    "typescript": "^5.8.3",
-    "prettier": "3.6.2"
+    "typescript": "^5.8.3"
   },
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsup"
+  "engines": {
+    "node": ">=16"
   },
-  "keywords": [
-    "signals",
-    "state",
-    "event-driven",
-    "reactive"
-  ],
-  "author": "Rishik Chowdary",
-  "license": "MIT"
+  "sideEffects": false,
+  "dependencies": {
+    "newtk": "^1.0.4"
+  }
 }
