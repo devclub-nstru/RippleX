@@ -1,11 +1,11 @@
-# Ripplex
+# YASML
 
 A lightweight, reactive state management library for React applications with built-in event bus and automatic async state handling.
 
 ## Installation
 
 ```bash
-npm install ripplex
+npm install yasml
 ```
 
 ## Quick Start
