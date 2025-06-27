@@ -1,10 +1,70 @@
 {
   "name": "ripplex-core",
   "version": "0.0.5",
-  "description": "A lightweight, framework-agnostic reactive state library.",
+  "description": "A lightweight, framework-agnostic reactive state management library with fine-grained reactivity and blazing performance.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepare": "npm run build",
+    "format": "prettier --write .",
+    "lint": "prettier --check ."
+  },
+  "keywords": [
+    "ripplex",
+    "ripplex-core",
+    "yasml",
+    "signals",
+    "state-management",
+    "state",
+    "reactive",
+    "fine-grained-reactivity",
+    "react",
+    "vue",
+    "angular",
+    "preact",
+    "framework-agnostic",
+    "solid-js",
+    "zustand",
+    "signal-library",
+    "performance",
+    "observable",
+    "recoil",
+    "mobx",
+    "reactivity-engine",
+    "devclub-nstru",
+    "npm-package",
+    "typescript"
+  ],
+  "author": {
+    "name": "Dev Club",
+    "url": "https://github.com/devclub-nstru"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devclub-nstru/ripplex"
+  },
+  "homepage": "https://github.com/devclub-nstru/ripplex#readme",
+  "bugs": {
+    "url": "https://github.com/devclub-nstru/ripplex/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
@@ -18,44 +78,8 @@
     "typescript": "^5.8.3",
     "prettier": "3.6.2"
   },
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
+  "engines": {
+    "node": ">=16"
   },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsup",
-    "prettier": "prettier --write ."
-  },
-  "keywords": [
-    "ripplex",
-    "ripplex-core",
-    "signals",
-    "state-management",
-    "reactive",
-    "framework-agnostic",
-    "react",
-    "vue",
-    "angular",
-    "ripples",
-    "fine-grained",
-    "devclub-nstru"
-  ],
-  "author": "Dev Club",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/devclub-nstru/ripplex"
-  },
-  "homepage": "https://github.com/devclub-nstru/ripplex",
-  "bugs": {
-    "url": "https://github.com/devclub-nstru/ripplex/issues"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "license": "MIT"
+  "sideEffects": false
 }
