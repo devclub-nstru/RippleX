@@ -11,7 +11,7 @@ npm install yasml
 ## Quick Start
 
 ```typescript
-import { ripple, useRipple, emit, useRippleEffect } from "ripplex";
+import { ripple, useRipple, emit, useRippleEffect } from "yasml";
 
 // Create reactive state
 const counterStore = {
@@ -193,7 +193,7 @@ const userStore = {
 };
 ```
 
-## Why Ripplex?
+## Why YASML?
 
 - **Simple**: Minimal API with maximum power
 - **Reactive**: Automatic React integration with `useRipple`
