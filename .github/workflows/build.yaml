@@ -27,7 +27,7 @@ jobs:
       # Conditional steps for release process on 'releases/**' branches
       - name: Get latest tag and commit messages for release notes
         id: get_release_info
-        if: startsWith(github.ref, 'refs/heads/main/')
+        if: startsWith(github.ref, 'refs/heads/main')
         run: |
           # Get the latest semantic version tag reachable from HEAD
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
@@ -57,7 +57,7 @@ jobs:
 
       - name: Increment version, create commit and tag
         id: npm_version_and_tag
-        if: startsWith(github.ref, 'refs/heads/main/')
+        if: startsWith(github.ref, 'refs/heads/main')
         run: |
           # Use --no-git-tag-version to prevent npm from creating a tag/commit immediately.
           # We'll handle the commit and tag manually to include custom messages and push.
@@ -80,7 +80,7 @@ jobs:
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Push new commit and tag to GitHub
-        if: startsWith(github.ref, 'refs/heads/main/')
+        if: startsWith(github.ref, 'refs/heads/main')
         run: |
           # Push the new commit to the current branch
           git push origin HEAD:${{ github.ref_name }}
@@ -88,7 +88,7 @@ jobs:
           git push origin ${{ steps.npm_version_and_tag.outputs.new_version }}
 
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/heads/main/')
+        if: startsWith(github.ref, 'refs/heads/main')
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.npm_version_and_tag.outputs.new_version }}
