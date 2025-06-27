@@ -5,7 +5,7 @@ A lightweight, reactive state management library for React applications with bui
 ## Installation
 
 ```bash
-npm install yasml
+npm install ripplex-core
 ```
 
 ## Quick Start
@@ -77,7 +77,7 @@ function UserProfile() {
 Decouple your application logic using events:
 
 ```typescript
-import { emit, on } from "ripple";
+import { emit, on } from "ripplex-core";
 
 // Listen for events
 on("user:login", (userData) => {

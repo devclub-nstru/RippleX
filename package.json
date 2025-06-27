@@ -1,6 +1,6 @@
 {
-  "name": "repplix-core",
-  "version": "0.0.1",
+  "name": "ripplex-core",
+  "version": "0.0.0",
   "description": "A lightweight, framework-agnostic reactive state library.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -32,7 +32,8 @@
     "prettier": "prettier --write ."
   },
   "keywords": [
-    "yasml",
+    "ripplex",
+    "ripplex-core",
     "signals",
     "state-management",
     "reactive",
@@ -47,11 +48,11 @@
   "author": "Dev Club",
   "repository": {
     "type": "git",
-    "url": "https://github.com/devclub-nstru/YASML"
+    "url": "https://github.com/devclub-nstru/ripplex"
   },
-  "homepage": "https://github.com/devclub-nstru/YASML",
+  "homepage": "https://github.com/devclub-nstru/ripplex",
   "bugs": {
-    "url": "https://github.com/devclub-nstru/YASML/issues"
+    "url": "https://github.com/devclub-nstru/ripplex/issues"
   },
   "license": "MIT"
 }
