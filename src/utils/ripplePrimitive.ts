@@ -1,5 +1,5 @@
 import { RippleInterface } from "../interfaces/ripple.interface";
-import { RIPPLE_BRAND } from "../core/ripple";
+import { RIPPLE_BRAND } from "./constants";
 
 export function ripplePrimitive<T>(initial: T): RippleInterface<T> {
   let _value = initial;

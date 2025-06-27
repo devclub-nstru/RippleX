@@ -2,11 +2,18 @@ type HandlerType = (payload?: any, tools?: {
     aborted: () => boolean;
 }) => void | Promise<any>;
 
+declare function ripplePrimitive<T>(initial: T): RippleInterface<T>;
+
 interface RippleInterface<T> {
     value: T;
     subscribe: (cb: () => void, selector?: (v: T) => unknown) => () => void;
     peek: () => T;
     brand: symbol;
+}
+interface RippleFunctionInterface {
+    <T>(initial: T): RippleInterface<T>;
+    proxy: <T extends object>(initial: T) => RippleInterface<T>;
+    signal: typeof ripplePrimitive;
 }
 
 interface OptionsInterface {
@@ -17,7 +24,7 @@ interface OptionsInterface {
 
 declare function useRippleEffect(event: string, handler: HandlerType, options?: OptionsInterface): void;
 
-declare function ripple<T>(initial: T): RippleInterface<T>;
+declare const ripple: RippleFunctionInterface;
 
 declare function useRipple<T, S = T>(ripple: RippleInterface<T>, selector?: (value: T) => S): S;
 

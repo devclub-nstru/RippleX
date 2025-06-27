@@ -1,6 +1,6 @@
 import { RippleInterface } from "../interfaces/ripple.interface";
 import { createProxy } from "./createProxy";
-import { RIPPLE_BRAND } from "../core/ripple";
+import { RIPPLE_BRAND } from "./constants";
 
 export function rippleObject<T extends object>(initial: T): RippleInterface<T> {
   let rawValue = initial;

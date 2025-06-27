@@ -1,7 +1,7 @@
 {
-  "name": "ripplex",
-  "version": "0.0.8",
-  "description": "A lightweight, reactive state management library for React.",
+  "name": "yasml",
+  "version": "0.0.1",
+  "description": "Yet Another Signals Management Library: A lightweight, framework-agnostic reactive state library.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -28,14 +28,31 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "prettier": "prettier --write ."
   },
   "keywords": [
+    "yasml",
     "signals",
-    "state",
-    "event-driven",
-    "reactive"
+    "state-management",
+    "reactive",
+    "framework-agnostic",
+    "react",
+    "vue",
+    "angular",
+    "ripples",
+    "fine-grained",
+    "devclub-nstru",
+    "yet another state management library"
   ],
-  "author": "Rishik Chowdary",
+  "author": "Dev Club",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devclub-nstru/YASML"
+  },
+  "homepage": "https://github.com/devclub-nstru/YASML",
+  "bugs": {
+    "url": "https://github.com/devclub-nstru/YASML/issues"
+  },
   "license": "MIT"
 }

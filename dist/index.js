@@ -990,6 +990,11 @@ function T3() {
   if (1 === _2.push(this)) (l.requestAnimationFrame || q2)(F2);
 }
 
+// src/utils/constants.ts
+var RIPPLE_BRAND = Symbol("signal");
+var isBatching = false;
+var dirtyStores = /* @__PURE__ */ new Set();
+
 // src/utils/ripplePrimitive.ts
 function ripplePrimitive(initial) {
   let _value = initial;
@@ -1026,29 +1031,38 @@ function ripplePrimitive(initial) {
 
 // src/utils/createProxy.ts
 function createProxy(target, notify) {
-  return new Proxy(target, {
+  const proxy = new Proxy(target, {
     get(obj, key, receiver) {
       const value = Reflect.get(obj, key, receiver);
-      if (typeof value === "object" && value !== null) {
+      if (typeof value === "object" && value !== null && !(RIPPLE_BRAND in value)) {
         return createProxy(value, notify);
       }
       return value;
     },
     set(obj, key, value) {
       const old = obj[key];
-      const newVal = typeof value === "object" && value !== null ? createProxy(value, notify) : value;
+      const newVal = typeof value === "object" && value !== null && !(RIPPLE_BRAND in value) ? createProxy(value, notify) : value;
       const result = Reflect.set(obj, key, newVal);
       if (!Object.is(old, value)) {
-        notify();
+        if (isBatching) {
+          dirtyStores.add(notify);
+        } else {
+          notify();
+        }
       }
       return result;
     },
     deleteProperty(obj, key) {
       const result = Reflect.deleteProperty(obj, key);
-      notify();
+      if (isBatching) {
+        dirtyStores.add(notify);
+      } else {
+        notify();
+      }
       return result;
     }
   });
+  return proxy;
 }
 
 // src/utils/rippleObject.ts
@@ -1091,14 +1105,41 @@ function rippleObject(initial) {
   };
 }
 
-// src/core/ripple.ts
-var RIPPLE_BRAND = Symbol("signal");
-function ripple(initial) {
-  if (typeof initial === "object" && initial !== null) {
-    return rippleObject(initial);
-  }
-  return ripplePrimitive(initial);
+// src/utils/rippleProxy.ts
+function rippleProxy(target) {
+  const listeners = /* @__PURE__ */ new Set();
+  const notify = () => {
+    if (isBatching) {
+      dirtyStores.add(notify);
+    } else {
+      for (const listener of listeners) listener();
+    }
+  };
+  const proxy = createProxy(target, notify);
+  const rippleObj = {
+    value: proxy,
+    peek: () => proxy,
+    subscribe: (cb, _selector) => {
+      listeners.add(cb);
+      return () => listeners.delete(cb);
+    },
+    brand: RIPPLE_BRAND
+  };
+  return rippleObj;
 }
+
+// src/core/ripple.ts
+var ripple = function(initial) {
+  return isObject(initial) ? rippleObject(initial) : ripplePrimitive(initial);
+};
+function isObject(value) {
+  return typeof value === "object" && value !== null || Array.isArray(value);
+}
+Object.assign(ripple, {
+  proxy: rippleProxy,
+  primitive: ripplePrimitive,
+  object: rippleObject
+});
 
 // src/core/useRipple.ts
 var import_react2 = require("react");
