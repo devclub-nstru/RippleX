@@ -12,7 +12,7 @@ export function ripplePrimitive<T>(initial: T): RippleInterface<T> {
 
   const subscribe = (
     callback: () => void,
-    selector: (v: T) => unknown = (v) => v
+    selector: (v: T) => unknown = (v) => v,
   ) => {
     const subscriber = {
       callback,

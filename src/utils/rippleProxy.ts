@@ -4,7 +4,7 @@ import { createProxy } from "./createProxy";
 
 export function rippleProxy<T extends object>(target: T): RippleInterface<T> {
   const listeners = new Set<() => void>();
-  
+
   const notify = () => {
     if (isBatching) {
       dirtyStores.add(notify);
@@ -12,9 +12,9 @@ export function rippleProxy<T extends object>(target: T): RippleInterface<T> {
       for (const listener of listeners) listener();
     }
   };
-  
+
   const proxy = createProxy(target, notify);
-  
+
   const rippleObj: RippleInterface<T> = {
     value: proxy,
     peek: () => proxy,

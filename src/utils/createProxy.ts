@@ -2,7 +2,7 @@ import { dirtyStores, isBatching, RIPPLE_BRAND } from "./constants";
 
 export function createProxy<T extends object>(
   target: T,
-  notify: () => void
+  notify: () => void,
 ): T {
   const proxy = new Proxy(target, {
     get(obj, key, receiver) {

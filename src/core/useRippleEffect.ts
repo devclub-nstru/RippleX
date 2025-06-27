@@ -7,7 +7,7 @@ import { OptionsInterface } from "../interfaces/options.interface";
 export function useRippleEffect(
   event: string,
   handler: HandlerType,
-  options?: OptionsInterface
+  options?: OptionsInterface,
 ) {
   const stableHandler = useRef(handler);
 

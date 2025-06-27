@@ -1,4 +1,4 @@
 export type HandlerType = (
   payload?: any,
-  tools?: { aborted: () => boolean }
+  tools?: { aborted: () => boolean },
 ) => void | Promise<any>;

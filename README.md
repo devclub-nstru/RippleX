@@ -108,7 +108,7 @@ useRippleEffect(
     const data = await response.json();
     todoStore.todos.value = data;
   },
-  todoStore // Automatically manages loading and error signals
+  todoStore, // Automatically manages loading and error signals
 );
 
 // Trigger from UI
