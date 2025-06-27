@@ -1,4 +1,4 @@
-# YASML
+# Ripplex
 
 A lightweight, reactive state management library for React applications with built-in event bus and automatic async state handling.
 
@@ -11,7 +11,7 @@ npm install yasml
 ## Quick Start
 
 ```typescript
-import { ripple, useRipple, emit, useRippleEffect } from "yasml";
+import { ripple, useRipple, emit, useRippleEffect } from "ripplex-core";
 
 // Create reactive state
 const counterStore = {
@@ -193,7 +193,7 @@ const userStore = {
 };
 ```
 
-## Why YASML?
+## Why Ripplex?
 
 - **Simple**: Minimal API with maximum power
 - **Reactive**: Automatic React integration with `useRipple`

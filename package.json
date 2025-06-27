@@ -1,7 +1,7 @@
 {
-  "name": "yasml",
-  "version": "0.0.2",
-  "description": "Yet Another Signals Management Library: A lightweight, framework-agnostic reactive state library.",
+  "name": "repplix-core",
+  "version": "0.0.1",
+  "description": "A lightweight, framework-agnostic reactive state library.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -42,8 +42,7 @@
     "angular",
     "ripples",
     "fine-grained",
-    "devclub-nstru",
-    "yet another state management library"
+    "devclub-nstru"
   ],
   "author": "Dev Club",
   "repository": {
