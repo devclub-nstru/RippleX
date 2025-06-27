@@ -14,7 +14,9 @@
     "@types/react": "^19.1.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "tsup": "^8.5.0"
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "prettier":"3.6.2"
   },
   "exports": {
     ".": {
