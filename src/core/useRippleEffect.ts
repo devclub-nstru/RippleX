@@ -7,10 +7,9 @@ import { OptionsInterface } from "../interfaces/options.interface";
 export function useRippleEffect(
   event: string,
   handler: HandlerType,
-  options?: OptionsInterface,
+  options?: OptionsInterface | RippleInterface<any>
 ) {
   const stableHandler = useRef(handler);
-
   useEffect(() => {
     stableHandler.current = handler;
   }, [handler]);
@@ -22,11 +21,44 @@ export function useRippleEffect(
     const wrapped = async (payload?: any) => {
       if (cancelled) return;
 
-      const loadingSignal =
-        options?.loadingSignal ??
-        (options?.loading as RippleInterface<boolean>);
-      const errorSignal =
-        options?.errorSignal ?? (options?.error as RippleInterface<any>);
+      let loadingSignal: RippleInterface<boolean> | undefined;
+      let errorSignal: RippleInterface<any> | undefined;
+
+      if (
+        options &&
+        typeof options === "object" &&
+        "value" in options &&
+        typeof options.value === "object"
+      ) {
+        const obj = options.value;
+        if ("loading" in obj && typeof obj.loading === "boolean") {
+          loadingSignal = {
+            get value() {
+              return options.value.loading;
+            },
+            set value(val: boolean) {
+              options.value = { ...options.value, loading: val };
+            },
+          } as RippleInterface<boolean>;
+        }
+        if ("error" in obj) {
+          errorSignal = {
+            get value() {
+              return options.value.error;
+            },
+            set value(val: any) {
+              options.value = { ...options.value, error: val };
+            },
+          } as RippleInterface<any>;
+        }
+      } else {
+        loadingSignal =
+          (options as OptionsInterface)?.loadingSignal ??
+          ((options as OptionsInterface)?.loading as RippleInterface<boolean>);
+        errorSignal =
+          (options as OptionsInterface)?.errorSignal ??
+          ((options as OptionsInterface)?.error as RippleInterface<any>);
+      }
 
       loadingSignal && (loadingSignal.value = true);
       errorSignal && (errorSignal.value = null);
