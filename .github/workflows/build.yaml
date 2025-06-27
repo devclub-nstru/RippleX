@@ -1,5 +1,4 @@
-name: build CI
-
+name: Build CI
 on:
   push:
     branches:
@@ -10,30 +9,31 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Needed for creating a GitHub Release, pushing new commits/tags
+      contents: write
+    outputs:
+      new_version: ${{ steps.npm_version_and_tag.outputs.new_version }}
     steps:
       - name: Checkout code with full history
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required to get full git history for log operations
+          fetch-depth: 0
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "24.x"
+
       - run: npm ci
       - run: npm run build --if-present
-      #- run: npm test
 
-      # Conditional steps for release process on 'releases/**' branches
+      # Only run on main branch
       - name: Get latest tag and commit messages for release notes
         id: get_release_info
-        if: startsWith(github.ref, 'refs/heads/main')
+        if: github.ref == 'refs/heads/main'
         run: |
-          # Get the latest semantic version tag reachable from HEAD
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           echo "Found latest tag: '$LATEST_TAG'"
-
-          # Get commit messages since the latest tag, or all if no tag exists
+          
           if [ -z "$LATEST_TAG" ]; then
             echo "No previous tag found. Getting all commit messages."
             COMMIT_MESSAGES=$(git log --pretty=format:"- %s" HEAD)
@@ -41,64 +41,49 @@ jobs:
             echo "Getting commit messages since tag '$LATEST_TAG'."
             COMMIT_MESSAGES=$(git log --pretty=format:"- %s" ${LATEST_TAG}..HEAD)
           fi
-
-          # Ensure COMMIT_MESSAGES is not empty; if it is, provide a default
+          
           if [ -z "$COMMIT_MESSAGES" ]; then
             COMMIT_MESSAGES="No new changes since last release."
           fi
-
-          echo "Collected commit messages:"
-          echo "$COMMIT_MESSAGES"
-
-          # Output commit messages for subsequent steps
+          
           echo "commit_messages<<EOF" >> $GITHUB_OUTPUT
           echo "$COMMIT_MESSAGES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Increment version, create commit and tag
         id: npm_version_and_tag
-        if: startsWith(github.ref, 'refs/heads/main')
+        if: github.ref == 'refs/heads/main'
         run: |
-          # Use --no-git-tag-version to prevent npm from creating a tag/commit immediately.
-          # We'll handle the commit and tag manually to include custom messages and push.
           NEW_VERSION=$(npm version patch --no-git-tag-version)
           echo "Determined new version: $NEW_VERSION"
-
-          # Configure Git user for the commit
+          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Add the modified package.json to staging
+          
           git add package.json
-
-          # Create a new commit with the version bump and release notes
           git commit -m "Release $NEW_VERSION" -m "${{ steps.get_release_info.outputs.commit_messages }}"
-
-          # Create the new tag
           git tag $NEW_VERSION
-
+          
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Push new commit and tag to GitHub
-        if: startsWith(github.ref, 'refs/heads/main')
+        if: github.ref == 'refs/heads/main'
         run: |
-          # Push the new commit to the current branch
           git push origin HEAD:${{ github.ref_name }}
-          # Push the newly created tag
           git push origin ${{ steps.npm_version_and_tag.outputs.new_version }}
 
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/heads/main')
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.npm_version_and_tag.outputs.new_version }}
           name: Release ${{ steps.npm_version_and_tag.outputs.new_version }}
           body: |
             Automated release from branch `${{ github.ref_name }}`.
-
+            
             ### Changes:
             ${{ steps.get_release_info.outputs.commit_messages }}
           draft: false
           prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the default GitHub token for authentication
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

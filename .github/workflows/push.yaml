@@ -1,18 +1,23 @@
-name: Auto Publish to npm
-
+name: Publish to npm
 on:
-  push:
+  workflow_run:
+    workflows: ["Build CI"]
+    types:
+      - completed
     branches:
       - main
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
-      contents: write
+      contents: read
       id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: actions/setup-node@v4
         with:
@@ -21,13 +26,7 @@ jobs:
 
       - run: npm ci
 
-      - name: Bump version and publish
-        run: |
-          npm version patch --no-git-tag-version
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -am "ci: bump version"
-          git push
-          npm publish --access public
+      - name: Publish to npm
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
