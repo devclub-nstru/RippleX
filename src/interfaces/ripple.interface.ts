@@ -10,5 +10,5 @@ export interface RippleInterface<T> {
 export interface RippleFunctionInterface {
   <T>(initial: T): RippleInterface<T>;
   proxy: <T extends object>(initial: T) => RippleInterface<T>;
-  signal: typeof ripplePrimitive;
+  primitive: typeof ripplePrimitive;
 }

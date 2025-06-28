@@ -7,7 +7,7 @@ import { ripplePrimitive } from "../utils/ripplePrimitive";
 import { rippleObject } from "../utils/rippleObject";
 import { rippleProxy } from "../utils/rippleProxy";
 
-const ripple = function <T>(initial: T): RippleInterface<T> {
+export const ripple = function <T>(initial: T): RippleInterface<T> {
   return isObject(initial) ? rippleObject(initial) : ripplePrimitive(initial);
 } as RippleFunctionInterface;
 
@@ -20,5 +20,3 @@ Object.assign(ripple, {
   primitive: ripplePrimitive,
   object: rippleObject,
 });
-
-export { ripple };

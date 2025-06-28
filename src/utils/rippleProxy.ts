@@ -6,23 +6,19 @@ export function rippleProxy<T extends object>(target: T): RippleInterface<T> {
   const listeners = new Set<() => void>();
 
   const notify = () => {
-    if (isBatching) {
-      dirtyStores.add(notify);
-    } else {
-      for (const listener of listeners) listener();
-    }
+    if (isBatching) dirtyStores.add(notify);
+    else listeners.forEach((l) => l());
   };
 
   const proxy = createProxy(target, notify);
 
-  const rippleObj: RippleInterface<T> = {
+  return {
     value: proxy,
     peek: () => proxy,
-    subscribe: (cb: () => void, _selector?: (v: T) => unknown) => {
+    subscribe: (cb: () => void) => {
       listeners.add(cb);
       return () => listeners.delete(cb);
     },
     brand: RIPPLE_BRAND,
   };
-  return rippleObj;
 }

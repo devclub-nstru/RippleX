@@ -1,51 +1,46 @@
 import { RippleInterface } from "../interfaces/ripple.interface";
 import { createProxy } from "./createProxy";
-import { RIPPLE_BRAND } from "./constants";
+import { dirtyStores, isBatching, RIPPLE_BRAND } from "./constants";
 
 export function rippleObject<T extends object>(initial: T): RippleInterface<T> {
-  let rawValue = initial;
-
-  const subscribers = new Set<{
-    callback: () => void;
-    selector: (v: T) => unknown;
-    prevValue: unknown;
-  }>();
-
-  const notify = () => {
-    for (const sub of subscribers) {
-      const nextVal = sub.selector(proxyValue);
-      if (!Object.is(nextVal, sub.prevValue)) {
-        sub.prevValue = nextVal;
-        sub.callback();
-      }
-    }
-  };
-
+  let raw = initial;
   let proxyValue = createProxy(initial, notify);
 
-  const subscribe = (
-    callback: () => void,
-    selector: (v: T) => unknown = (v) => v,
-  ) => {
-    const subscriber = {
-      callback,
-      selector,
-      prevValue: selector(proxyValue),
-    };
-    subscribers.add(subscriber);
-    return () => subscribers.delete(subscriber);
+  const subs = new Set<{
+    cb: () => void;
+    sel: (v: T) => unknown;
+    prev: unknown;
+  }>();
+
+  function notify() {
+    if (isBatching) {
+      dirtyStores.add(notify);
+      return;
+    }
+    for (const s of subs) {
+      const next = s.sel(proxyValue);
+      if (!Object.is(next, s.prev)) {
+        s.prev = next;
+        s.cb();
+      }
+    }
+  }
+
+  const subscribe = (cb: () => void, sel: (v: T) => unknown = (v) => v) => {
+    const sub = { cb, sel, prev: sel(proxyValue) };
+    subs.add(sub);
+    return () => subs.delete(sub);
   };
 
   return {
     get value() {
       return proxyValue;
     },
-    set value(newVal: T) {
-      if (!Object.is(rawValue, newVal)) {
-        rawValue = newVal;
-        proxyValue = createProxy(newVal, notify);
-        notify();
-      }
+    set value(v: T) {
+      if (Object.is(raw, v)) return;
+      raw = v;
+      proxyValue = createProxy(v, notify);
+      notify();
     },
     subscribe,
     peek: () => proxyValue,
