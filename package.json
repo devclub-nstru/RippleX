@@ -1,6 +1,6 @@
 {
   "name": "ripplex-core",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A lightweight, framework-agnostic reactive state library.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
